@@ -1,6 +1,7 @@
 import streamlit as st
+import pandas as pd
 
-st.set_page_config(layout="wide", )
+st.set_page_config(layout="wide")
 
 # Import custom fonts and CSS for the title and text box
 st.markdown("""
@@ -31,10 +32,20 @@ st.markdown("""
         background-color: #e0b3ff; /* Light purple background inside the border */
         display: inline-block; /* Ensure the border wraps tightly around the title */
     }
+    .resizable-col {
+        transition: flex 0.3s ease-in-out; /* Smooth transition for resizing */
+    }
+    .grow {
+        flex: 1;
+    }
+    .shrink {
+        flex: 0.5;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)
+# Layout for the image and text
+col1, col2 = st.columns([1, 1])
 
 with col1:
     st.image("images/Image.png")
@@ -55,6 +66,31 @@ with col2:
     </div>
     """
     st.markdown(content, unsafe_allow_html=True)
+
+# Read the data from CSV
+df = pd.read_csv("data.csv", sep=";")
+
+# Display content in two columns
+for i in range(len(df) // 2):
+    with st.container():
+        cols = st.columns([1.5, 0.3, 1.5])
+        with cols[0]:
+            st.header(df.iloc[i]["title"])
+            st.markdown(df.iloc[i]["description"], unsafe_allow_html=True)
+            st.image("images/" + df.iloc[i]["image"])
+            st.write(f"[Source Code]({df.iloc[i]['url']})")
+
+        with cols[2]:
+            if i + len(df) // 2 < len(df):
+                st.header(df.iloc[i + len(df) // 2]["title"])
+                st.markdown(df.iloc[i + len(df) // 2]["description"], unsafe_allow_html=True)
+                st.image("images/" + df.iloc[i + len(df) // 2]["image"])
+                st.write(f"[Source Code]({df.iloc[i + len(df) // 2]['url']})")
+
+
+
+
+
 
 
 
